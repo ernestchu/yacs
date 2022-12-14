@@ -124,6 +124,9 @@ class CfgNode(dict):
             if isinstance(v, dict):
                 # Convert dict to CfgNode
                 dic[k] = cls(v, key_list=key_list + [k])
+            elif isinstance(v, list):
+                dic[k] = [cls(vv) if isinstance(vv, dict) else vv for vv in v]
+                # TODO: also check valid leaf type for vv other than dict
             else:
                 # Check for valid leaf type or nested CfgNode
                 _assert_with_logging(
@@ -189,7 +192,10 @@ class CfgNode(dict):
         """Dump to a string."""
 
         def convert_to_dict(cfg_node, key_list):
-            if not isinstance(cfg_node, CfgNode):
+            if isinstance(cfg_node, list):
+                # TODO update key_list for correct error message
+                return [convert_to_dict(el, key_list) for el in cfg_node]
+            elif not isinstance(cfg_node, CfgNode):
                 _assert_with_logging(
                     _valid_type(cfg_node),
                     "Key {} with value {} is not a valid type; valid types: {}".format(
