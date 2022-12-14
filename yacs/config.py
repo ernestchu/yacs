@@ -221,6 +221,7 @@ class CfgNode(dict):
     def merge_from_other_cfg(self, cfg_other):
         """Merge `cfg_other` into this CfgNode."""
         _merge_a_into_b(cfg_other, self, self, [])
+        return self
 
     def merge_from_list(self, cfg_list):
         """Merge config (keys, values) in a list (e.g., from command line) into
